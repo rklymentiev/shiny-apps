@@ -1,0 +1,365 @@
+---
+title: "Bayes's Rule and Disease Testing"
+author: "Ruslan Klymentiev"
+date: "3/21/2020"
+output:
+  html_document:
+    mathjax: http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML
+  pdf_document: default
+  word_document: default
+runtime: html
+---
+
+## Table of contents
+
+- [Terminology](#terminology) 
+- [Measuring the probability of having a disease](#measure) 
+  - [Initial State](#init0) 
+  - [Updating Probability Using Bayes's Rule](#bayes-update)
+  - [Probability Trees](#prob-trees)
+- [Using R](#r)
+- [One More Example](#another-example)
+- [Bayesian Hypothesis Testing](#hyp-test)
+- [References](#ref) 
+
+## <a name="termoinology">Terminology</a>
+
+* **Prevalence** in epidemiology is the proportion of a particular population found to be affected by a medical condition [[1]](#1). For example, according to Public Health Center of Ukraine [[2]](#2) HIV/AIDS review (01.04.2019) [[3]](#3) 42,8 of 100000 people in Ukraine have HIV [[4]](#4). Prevalence of HIV if that case is going to equal: 
+
+ $$\text{Prevalence} = \frac{42.8}{100000} = 0.000428$$
+
+* **Sensitivity** and **specificity** are statistical measures of the performance of a binary classification test, also known in statistics as a classification function, that are widely used in medicine:
+
+ * **Sensitivity** (also called *the true positive rate*, *the recall*, or *probability of detection* in some fields) measures the proportion of actual positives that are correctly identified as such (e.g., the percentage of sick people who are correctly identified as having the condition).
+
+ * **Specificity** (also called *the true negative rate*) measures the proportion of actual negatives that are correctly identified as such (e.g., the percentage of healthy people who are correctly identified as not having the condition). [[5]](#5)
+
+ For example, we tested 1000 people who have HIV and 1000 people who don't have have with the Test "X". Test showed following results:
+
+| | Actual: Doesn't have a disease | Actual: Has a disease | Total |
+|:-:|:-:|:-:|:-:|
+|**Predicted: Doesn't have a disease**| 990 | 15 | 1005 |
+|**Predicted: Has a disease**| 10 | 985 | 995 |
+|**Total**| 1000 | 1000 | 2000 |
+
+* In 985 cases out of 1000 test correctly predicted that person has HIV, so:
+
+ $$\text{Sensitivity} = \frac{985}{1000} = 0.985$$
+
+ We will denote it as $P(\text{"+"|HIV})$ - probability of positive test result given that person has HIV.
+
+* In 990 cases out of 1000 test correctly predicted that person doesn't have HIV, so:
+
+ $$\text{Specificity} = \frac{990}{1000} = 0.99$$
+
+ We will denote it as $P(\text{"-"|no HIV})$ - probability of negative test result given that person doesn't have HIV.
+
+ This is co called **conditional probability** [[6]](#6). We assume that event after the $|$ sign has occured and measure the probability of a new event (before the $|$ sign).
+
+ Usually, tests provide sensitivity and specificity scores from manufacturer. For example, express HIV test CITO TEST claims to have $99.99\%$ sensitivity and $99.99\%$ specificity [[7]](#7).
+ 
+
+## <a name="measure">Measuring the probability of having a disease</a>
+
+### <a name="init0">Initial state</a>
+
+Imagine that a person comes for HIV test and we don't have any information about his HIV status nor his lifestyle or partner/parents' status. What is the probability that this person has HIV before doing the test? 
+
+Since we don't have information and we don't want to make wrong assumptions we assign the prevalence of HIV in the population he came from as the probability that he has HIV. So:
+
+$$P(\text{HIV}) = 0.000428$$
+
+Now, subject has taken the express CITO test and it resulted **positive**. As we have seen before, the sensitivity of that test is really high ($99.99\%$), however does it really mean that this subject has HIV?
+
+### <a name="bayes-update">Updating probability using Bayes's Rule</a>
+
+> In probability theory and statistics, **Bayes’s theorem** (alternatively Bayes’s law or Bayes’s rule) describes the probability of an event, based on prior knowledge of conditions that might be related to the event. [[8]](#8)
+
+Imagine, we have to dependent events $A$ and $B$. We want to measure the probability that event $B$ will occur **given** that event $A$ has occured. Accoring to Bayes's Rule:
+
+$$P(\text{B|A}) = \frac{P(\text{A|B}) \times P(\text{B})}{P(\text{A})}$$
+
+where:
+
+- $P(\text{B|A})$ - posterior probability of event $B$;
+- $P(\text{B})$, $P(\text{A})$ - prior probabilities of events $B$ and $A$;
+- $P(\text{A|B})$ - likelihood 
+
+In our HIV test example we want to know what is the probability that person actually has HIV, given that he was tested positive. Using Bayes's rule:
+
+$$P(\text{HIV|"+"}) = \frac{P(\text{"+"|HIV}) \times P(\text{HIV})}{P(\text{"+"})}$$
+We have the values of numerator, however we don't have the value in denumerator (probability of being tested positive). We can easily calculate it using **probability trees** [[9]](#9).
+
+### <a name="prob-trees">Probability trees</a>
+
+> A decision tree is a decision support tool that uses a tree-like model of decisions and their possible consequences, including chance event outcomes, resource costs, and utility. It is one way to display an algorithm that only contains conditional control statements.
+
+<center><img src="https://i.ibb.co/SK1WtnK/Deepin-Screenshot-select-area-20200321194239.png" width="800"></img></center>
+
+We start from the initial node (`Subject`). We have two options - subject might have HIV or might not have HIV. We assumed that probability of HIV for that person is equal to prevalance of HIV. 
+
+Let's look at `Disease` node. At this point we say that person **has** HIV (with the probability 0.000428) and now two options would be:
+
+1) person will be tested **positive** ($P(\text{"+"|HIV})$, sensitivity of a test)
+2) person will be tested **negative** ($P(\text{"-"|HIV})$, unknown).
+
+We don't have $P(\text{"-"|HIV})$, however we can easily calculate it since this two events are **complementary** [[10]](#10). Hence:
+
+$$P(\text{"-"|HIV}) = 1 - P(\text{"+"|HIV})$$
+$$P(\text{"-"|HIV}) = 1 - 0.9999 = 0.0001$$
+
+We can do the following for the `no Disease` node.
+
+The last step would be calculating the **joint probabilities** [[11]](#11).
+
+For the `"+" given Disease` node we multiply $P(\text{HIV}) \times P(\text{"+"|HIV})$ and get:
+
+$$P(\text{"+" &  HIV)} = P(\text{HIV}) \times P(\text{"+"|HIV}) = 0.000428 \times 0.0.9999 = 0.0004279572$$
+
+This is the probability of having HIV **and** ($\cap$, $\&$) being tested positive. 
+
+We can do the same for the rest three nodes.
+
+Since we need the probability of being tested positive ($P(\text{"+"})$) we add two probabilities together which contain "+":
+
+$$P(\text{"+"}) = P(\text{"+" &  HIV)} + P(\text{"+" &  no HIV)}$$
+$$P(\text{"+"}) = 0.0004279572 + 0.0000999572 = 0.0005279144$$
+In other words, the probability of being tested **positive** is $\approx 0.0005 \approx 0.05\%$, regardless of the HIV status.
+
+Now we can calculate the desired probability:
+
+$$P(\text{HIV|"+"}) = \frac{P(\text{"+"|HIV}) \times P(\text{HIV})}{P(\text{"+"})}$$
+We could also rewrite this equation for the general case:
+
+$$P(\text{HIV|"+"}) = \frac{P(\text{"+"|HIV}) \times P(\text{HIV})}{P(\text{"+"|HIV}) \times P(\text{HIV}) + P(\text{"+"|no HIV}) \times P(\text{no HIV})}$$
+
+$$P(\text{HIV|"+"}) = \frac{0.9999 \times 0.000428}{0.0005279144} = 0.8106564$$
+Note, that the probability that the subject has HIV is about $81\%$. This is due to the relevantly small prevalence of a disease in a population. Even though the test has high sensitivity it doesn't guarantee that you have a diseases in $99.99\%$ of cases.
+
+## <a name="r">Using R</a>
+
+We still have $19\%$ chance that person doesn't have HIV. What would be the next step to be sure with diagnosis? We can do the second test! The only difference now is that the initial (prior) probability of HIV for this subject is going to be $0.8106564$, not $0.000428$ since now we have some information. We are going to use R to do the calculations:
+
+```{r}
+BayesRuleProba <- function(p_D, sensitivity, specificity, test_result, statistic) {
+  p_neg_given_noD <- specificity
+  p_pos_given_D <- sensitivity
+  
+  p_noD <- 1 - p_D
+  p_pos_given_noD = round(1 - p_neg_given_noD, 4)
+  p_neg_given_D = round(1 - p_pos_given_D, 4)
+  p_neg_and_D <- p_D * p_neg_given_D
+  p_pos_and_D <- p_D * p_pos_given_D
+  p_neg_and_noD <- p_noD * p_neg_given_noD
+  p_pos_and_noD <- p_noD * p_pos_given_noD
+  
+  p_pos <- p_pos_and_D + p_pos_and_noD
+  p_neg <- p_neg_and_D + p_neg_and_noD
+  
+  if (statistic == "Has a disease" & test_result == "Negative") {
+        p <- p_neg_and_D / (p_neg_and_D + p_neg_and_noD)
+    } else if (statistic == "Has a disease" & test_result == "Positive") {
+        p <- p_pos_and_D / (p_pos_and_D + p_pos_and_noD)
+    } else if (statistic == "Doesn't have a disease" & test_result == "Negative") {
+        p <- p_neg_and_noD / (p_neg_and_noD + p_neg_and_D)
+    } else {
+        p <- p_pos_and_noD / (p_pos_and_D + p_pos_and_noD)
+    }
+
+    print(paste0("Probability that subject ", tolower(statistic), " given that the test result was ",
+           tolower(test_result), " is: ", round(p, 5)))
+        
+  return(p)
+}
+```
+
+### Initial state:
+
+```{r}
+prevalance <- 42.8/100000
+sensitivity <- 0.9999
+specificity <- 0.9999
+test_result <- "Positive"
+statistic <- "Has a disease"
+
+p <- BayesRuleProba(
+  p_D = prevalance,
+  sensitivity = sensitivity,
+  specificity = specificity,
+  test_result = test_result,
+  statistic = statistic)
+```
+
+### Second test
+
+Imagine the test was **positive** again. What is the probability that subject has HIV? We didn't change the test, so sensitivity and specificity parameters stay the same. The only this that is changing is $P(\text{HIV})$.
+
+```{r}
+p_HIV_new <- p # 0.81066
+sensitivity <- 0.9999
+specificity <- 0.9999
+test_result <- "Positive"
+statistic <- "Has a disease"
+
+p <- BayesRuleProba(
+  p_D = p_HIV_new,
+  sensitivity = sensitivity,
+  specificity = specificity,
+  test_result = test_result,
+  statistic = statistic)
+```
+
+After the second test the probability that person has HIV is around $99.9\%$. So after getting more data (test) we update the probability with Bayes's Rule and this lead to better inference.
+
+## <a name="another-example">One more example</a>
+
+What would happen if test had a bit lower sensitivity/specificity score? Assume the test has following performance:
+
+* $P(\text{"+"|HIV}) = 0.98$
+* $P(\text{"-"|no HIV}) = 0.98$
+
+Prevalence of HIV stays the same.
+
+### Initial state
+
+```{r}
+sensitivity <- 0.98
+specificity <- 0.98
+test_result <- "Positive"
+statistic <- "Has a disease"
+
+p <- BayesRuleProba(
+  p_D = prevalance,
+  sensitivity = sensitivity,
+  specificity = specificity,
+  test_result = test_result,
+  statistic = statistic)
+```
+
+### Second test
+
+```{r}
+p_HIV_new <- p
+sensitivity <- 0.98
+specificity <- 0.98
+test_result <- "Positive"
+statistic <- "Has a disease"
+
+p <- BayesRuleProba(
+  p_D = p_HIV_new,
+  sensitivity = sensitivity,
+  specificity = specificity,
+  test_result = test_result,
+  statistic = statistic)
+```
+
+### Third test
+
+```{r}
+p_HIV_new <- p
+sensitivity <- 0.98
+specificity <- 0.98
+test_result <- "Positive"
+statistic <- "Has a disease"
+
+p <- BayesRuleProba(
+  p_D = p_HIV_new,
+  sensitivity = sensitivity,
+  specificity = specificity,
+  test_result = test_result,
+  statistic = statistic)
+```
+
+We can see that after taking new test with slightly worst scores only after three test we could get the probability that person actually has HIV ($0.98054$).
+
+## <a name="hyp-test">Bayesian Hypothesis Testing</a>
+
+Image you have two hypothesis:
+
+* $H_1$: Subject has HIV
+* $H_2$: Sudject doesn't have HIV
+
+You want to check if there is enough evidence against one of the hypothesis to reject or accept it. This can be achieved using **Bayes factor** [[12]](#12), which can be find as:
+
+$$BF(H_1:H_2) = \frac{\text{Posterior Odds}}{\text{Prior Odds}}$$
+$$\text{Prior Odds} = PrO(H_1:H_2) = \frac{P(H_1)}{P(H_2)}$$
+$$\text{Posterior Odds} = PO(H_1:H_2) = \frac{P(H_1|\text{data})}{P(H_2|\text{data})}$$
+In our case $\text{data}$ is the test result.
+
+Coming back to initial state when the subject didn't do the test we can calculate $\text{Prior Odds}$:
+
+* $H_1$: Subject has HIV; $P(H_1) = 0.000428$ (prevalance of HIV)
+* $H_2$: Sudject doesn't have HIV; $P(H_2) = 1 - \text{Prevalance} = 1 - 0.000428 = 0.999572$
+
+$$PrO(H_1:H_2) = \frac{P(H_1)}{P(H_2)}=\frac{0.000428}{0.999572} \approx 0.00043$$
+
+```{r}
+prevalance <- 42.8/100000
+p_H1 <- prevalance
+p_H2 <- 1 - prevalance
+sensitivity <- 0.9999
+specificity <- 0.9999
+test_result <- "Positive"
+statistic <- "Has a disease"
+
+prior_odds <- p_H1/p_H2
+print(paste0("Prior Odds (H1:H2): ", round(prior_odds, 6)))
+```
+Assume that subject did the test and it came out **positive**. We can calculate $\text{Posterior Odds}$ using the numbers from above.
+
+$$P(H_1|\text{"+"}) = P(\text{HIV|"+"}) = 0.8107$$
+$$P(H_2|\text{"+"}) = P(\text{no HIV|"+"}) = 0.1893$$
+$$PO(H_1:H_2) = \frac{P(H_1|\text{"+"})}{P(H_2|\text{"+"})} = \frac{0.8107}{0.1893} \approx 4.2814$$
+```{r collapse=TRUE}
+p_H1_given_pos <- BayesRuleProba(
+  p_D = prevalance,
+  sensitivity = sensitivity,
+  specificity = specificity,
+  test_result = test_result,
+  statistic = "Has a disease")
+
+p_H2_given_pos <- BayesRuleProba(
+  p_D = prevalance,
+  sensitivity = sensitivity,
+  specificity = specificity,
+  test_result = test_result,
+  statistic = "Doesn't have a disease")
+
+posterior_odds = p_H1_given_pos / p_H2_given_pos
+print(paste0("Posterior Odds (H1:H2): ", round(posterior_odds, 6)))
+```
+Now we can find the Bayes Factor:
+
+$$BF(H_1:H_2) = \frac{\text{Posterior Odds}}{\text{Prior Odds}} = \frac{4.281404}{0.000428} = 9999$$
+```{r}
+bayes_factor <- posterior_odds / prior_odds
+print(paste0("Bayes Factor (H1:H2): ", round(bayes_factor, 6)))
+```
+To interpret the value we can reffer to Harold Jeffreys interpretation table:
+
+<center><img src="https://www.researchgate.net/publication/320376135/figure/tbl1/AS:614127873568776@1523430903196/The-Evidence-Categories-for-the-Bayes-Factor-BF-ij-as-given-by-Jeffreys-1961.png" width="500"></img></center>
+
+
+$BF(H_1:H_2) > 100$, therefore we have decisive evidence for $H_1$ (subject has HIV) even after the first test.
+
+
+## <a name="ref">References</a>
+
+* <a name="1">[1]:</a> https://en.wikipedia.org/wiki/Prevalence
+* <a name="2">[2]:</a> https://phc.org.ua/en
+* <a name="3">[3]:</a> https://phc.org.ua/kontrol-zakhvoryuvan/vilsnid/statistika-z-vilsnidu
+* <a name="4">[4]:</a> https://en.wikipedia.org/wiki/HIV
+* <a name="5">[5]:</a> https://en.wikipedia.org/wiki/Sensitivity_and_specificity
+* <a name="6">[6]:</a> https://en.wikipedia.org/wiki/Conditional_probability
+* <a name="7">[7]:</a> https://apteka911.com.ua/shop/test-cito-test-tsito-test-vich-dlya-diagnostiki-vich-infektsii-dlya-samokontrolya-1-sht-p69784
+* <a name="8">[8]:</a> https://en.wikipedia.org/wiki/Bayes%27_theorem
+* <a name="9">[9]:</a> https://en.wikipedia.org/wiki/Decision_tree
+* <a name="10">[10]:</a> https://en.wikipedia.org/wiki/Complementary_event
+* <a name="11">[11]:</a> https://en.wikipedia.org/wiki/Joint_probability_distribution
+* <a name="12">[12]:</a> https://en.wikipedia.org/wiki/Bayes_factor
+
+
+* (Not listed before, but great example of probability trees using `Rgraphviz`): http://www.harrysurden.com/wordpress/archives/292
+
+
+

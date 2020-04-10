@@ -1,0 +1,12 @@
+name: shiny_bayes
+title: shiny_bayes
+username:
+account: ruslankl
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1974391
+bundleId: 2905464
+url: https://ruslankl.shinyapps.io/shiny_bayes/
+when: 1584801682.25881
+asMultiple: FALSE
+asStatic: FALSE

@@ -1,0 +1,12 @@
+name: roc_simulation
+title: roc_simulation
+username:
+account: ruslankl
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 2073868
+bundleId: 2996866
+url: https://ruslankl.shinyapps.io/roc_simulation/
+when: 1586532329.50425
+asMultiple: FALSE
+asStatic: FALSE

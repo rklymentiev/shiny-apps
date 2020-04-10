@@ -1,0 +1,77 @@
+library(Rgraphviz)
+
+p_F <- 0.01
+p_smoke <- 0.1
+p_noF <- 1 - p_F
+p_noSmoke <- 1 - p_smoke
+
+p_smoke_given_F <- 0.9
+p_noSmoke_given_F <- 1 - p_smoke_given_F 
+
+p_smoke_and_F <- round(p_smoke_given_F * p_F, 3)
+p_smoke_and_noF <- p_smoke - p_smoke_and_F
+
+p_smoke_given_noF <- round(p_smoke_and_noF / p_noF, 3)
+p_noSmoke_given_noF <- 1 - p_smoke_given_noF
+
+p_noSmoke_and_F <- round(p_F * p_noSmoke_given_F, 3)
+p_noSmoke_and_noF <- round(p_noF * p_noSmoke_given_noF, 3)
+
+# specify the nodes names
+node0 <- "Init"
+node1 <- "Fire"
+node2 <- "no Fire"
+node3 <- "Smoke given Fire"
+node4 <- "no Smoke given Fire"
+node5 <- "Smoke given no Fire"
+node6 <- "no Smoke given no Fire"
+node7 <- "Fire & Smoke"
+node8 <- "Fire & no Smoke"
+node9 <- "no Fire & Smoke"
+node10 <- "no Fire & no Smoke"
+nodeNames <- c(node0, node1, node2, node3, node4, node5, node6, node7, node8, node9, node10)
+
+# create new graph object
+rEG <- new("graphNEL", nodes=nodeNames, edgemode="directed")
+
+rEG <- addEdge(node0, node1, rEG)
+rEG <- addEdge(node0, node2, rEG)
+rEG <- addEdge(node1, node3, rEG)
+rEG <- addEdge(node1, node4, rEG)
+rEG <- addEdge(node2, node5, rEG)
+rEG <- addEdge(node2, node6, rEG)
+rEG <- addEdge(node3, node7, rEG)
+rEG <- addEdge(node4, node8, rEG)
+rEG <- addEdge(node5, node9, rEG)
+rEG <- addEdge(node6, node10, rEG)
+
+# specify the attributes of the object (color, shape, etc)
+at <- list(node=list(label = "foo", fillcolor="lightgreen", 
+                     fontsize=15, shape="ellipse", fixedsize=FALSE), 
+           edge=list(color="red"), 
+           graph=list(rankdir="LR"))
+
+
+plot(rEG, attrs = at)
+
+height_fire_1 <- 350
+height_no_fire_1 <- 250
+
+width_2 <- 200
+width_3 <- 450
+  
+text(50, height_fire_1, paste0("P(", node1, ")=", p_F), col="black")
+text(50, height_no_fire_1, paste0("P(", node2, ")=", p_noF), col="black")
+
+text(width_2, 520, paste0("P(", node3, ")=", p_smoke_given_F), col="black")
+text(width_2, height_fire_1, paste0("P(", node4, ")=", p_noSmoke_given_F), col="black")
+
+text(width_3, 520, paste0("P(", node7, ")=", p_smoke_and_F), col="black")
+text(width_3, height_fire_1, paste0("P(", node8, ")=", p_noSmoke_and_F), col="black")
+
+text(width_2, height_no_fire_1, paste0("P(", node5, ")=", p_smoke_given_noF), col="black")
+text(width_2, 110, paste0("P(", node6, ")=", p_noSmoke_given_noF), col="black")
+
+text(width_3, height_no_fire_1, paste0("P(", node9, ")=", p_smoke_and_noF), col="black")
+text(width_3, 110, paste0("P(", node10, ")=", p_noSmoke_and_noF), col="black")
+}, width = 950, height = 750)

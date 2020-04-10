@@ -1,0 +1,12 @@
+name: app1
+title: app1
+username:
+account: ruslankl
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1967730
+bundleId: 2899284
+url: https://ruslankl.shinyapps.io/app1/
+when: 1584647550.44045
+asMultiple: FALSE
+asStatic: FALSE

@@ -1,0 +1,13 @@
+name: bayes_rule
+title: bayes_rule
+username:
+account: ruslankl
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 1974388
+bundleId: 2996876
+url: https://ruslankl.shinyapps.io/bayes_rule/
+when: 1586532454.27469
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: overview.html|overview.Rmd
