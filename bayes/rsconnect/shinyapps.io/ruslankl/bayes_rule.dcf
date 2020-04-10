@@ -5,9 +5,9 @@ account: ruslankl
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 1974388
-bundleId: 2996876
+bundleId: 2996904
 url: https://ruslankl.shinyapps.io/bayes_rule/
-when: 1586532454.27469
+when: 1586532925.71162
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: overview.html|overview.Rmd

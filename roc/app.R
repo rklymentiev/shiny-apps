@@ -18,6 +18,7 @@ ui <- fluidPage(
         helpText("Use threshold slider to find the best values of TPR of FPR. Correctly predicted observations
         are painted in green, incorrectly predicted are painted in red. The point corresponding to that
                  treshold value is plotted in red on the ROC plot."),
+        helpText(a(href="https://github.com/ruslan-kl/shiny-apps/tree/master/roc", target="_blank", "Code at GitHub")),
         width = 3),
 
     mainPanel(
