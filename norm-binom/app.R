@@ -1,46 +1,47 @@
 library(shiny)
 library(shinythemes)
 library(ggplot2)
+library(markdown)
 
+#### HELPER FUNCTIONS ####
 
-define_sign <- function(area, type) {
+define_sign <- function(area, type, correction) {
     if (area == "lower" & type == "strict") {
-        sign <- "<="
+        sign <- paste0("<= ", -correction/2, " +")
     } else if (area == "lower" & type == "not_strict") {
-        sign <- "<= 0.5 +"
+        sign <- paste0("<= ", correction/2, " +")
     } else if (area == "upper" & type == "strict") {
-        sign <- ">="
-    } else {sign <- ">= -0.5 +"}
+        sign <- paste0(">= ", correction/2, " +")
+    } else {sign <- paste0(">= ", -correction/2, " +")}
     return(sign)
 }
 
 check_conditions <- function(n, p) {
+    # check if conditions for approximations are met
     if (n*p >= 10 & n*(1-p) >= 10) {
         return(TRUE)
         } else {return(FALSE)}
 }
 
-# Define UI for application that draws a histogram
+#### UI ####
 ui <- fluidPage(
     theme = shinytheme("flatly"),
 
-    # Application title
     titlePanel("Normal Approximation to Binomial Distrtibution"),
 
-    # Sidebar with a slider input for number of bins 
     sidebarPanel(
         sliderInput(
-            inputId = "p", label = "Probability of Success (p)",
+            inputId = "p", label = "Probability of Success (p):",
             min = 0, max = 1, value = 0.5, step = 0.01),
         sliderInput(
-            inputId = "n", label = "Number of Trials (n)",
+            inputId = "n", label = "Number of Trials (n):",
             value = 50, min = 1, max = 300),
         uiOutput("k"),
         selectInput(
             inputId = "area",
             label = "Area of Interest:",
-            choices = c("Lower" = "lower",
-                        "Upper" = "upper"),
+            choices = c("Lower Tail" = "lower",
+                        "Upper Tail" = "upper"),
             selected = "lower"),
         selectInput(
             inputId = "type",
@@ -48,32 +49,41 @@ ui <- fluidPage(
             choices = c("Strict (<, >)" = "strict",
                         "Not strict (≤, ≥)" = "not_strict"),
             selected = "strict"),
+        checkboxInput("correction", HTML("<b>Use correction of 0.5</b>"), value = TRUE),
         HTML("<b>Shade Area:</b>"),
         checkboxInput("shade_curve", "Under the Normal Curve", value = TRUE),
-        checkboxInput("shade_bar", "On the Bar Chart", value = FALSE)
+        checkboxInput("shade_bar", "On the Bar Chart", value = FALSE),
+        br(),
+        helpText(a(href="https://github.com/ruslan-kl/shiny-apps/tree/master/norm-binom", target="_blank", "Code at GitHub")),
+        width = 4
         
     ),
 
-    # Show a plot of the generated distribution
     mainPanel(
-        htmlOutput("conditions"),
-        br(),
-        plotOutput("distplot"),
-        htmlOutput("results"))
-    )
+        tabsetPanel(
+            type = "tabs",
+            tabPanel("Results", 
+                     htmlOutput("conditions"),
+                     br(),
+                     plotOutput("distplot"),
+                     htmlOutput("results")),
+            tabPanel("Info", withMathJax(includeMarkdown("info.html")))
+            )
+        )
+)
 
-# Define server logic required to draw a histogram
+#### SERVER ####
 server <- function(input, output) {
 
-    
+    #### RENDER INPUT VALUES ####
     output$k <- renderUI({
         n <- input$n
         sliderInput(
-            inputId = "k", label = "Number of Successes (k)",
+            inputId = "k", label = "Number of Successes (k):",
             value = floor(n/2), min = 0, max = n, step = 1)
         })
     
-    
+    #### CONDITIONS CHECK ####
     output$conditions <- renderText({
         p <- input$p
         n <- input$n
@@ -86,26 +96,27 @@ server <- function(input, output) {
         paste0(text, "<br><i>np = ", n*p, "<br>n(1-p) = ", n*(1-p))
     })
     
-    
+    #### DISTRITBUTION PLOT ####
     output$distplot <- renderPlot({
         p <- input$p
         n <- input$n
         k <- as.integer(input$k)
         area <- input$area
         type <- input$type
+        correction <- input$correction
 
-        x <- as.integer(1:n)
+        x <- as.integer(0:n)
         x_norm <- seq(min(x), max(x), by = 0.1)
         binom_dist <- dbinom(x, size = n, prob = p)
         norm_dist <- dnorm(x = x_norm, mean = n*p, sd = sqrt(n*p*(1-p)))
         
-        sign <- define_sign(area, type)
+        sign <- define_sign(area, type, correction)
         cndtn_for_area <- eval(parse(text = paste("x_norm",sign,"k")))
         
         shade_curve <- input$shade_curve
         shade_bar <- input$shade_bar
         
-        fill <- rep("not_selected", n)
+        fill <- rep("not_selected", n+1)
         if(shade_bar) {
             if(!is.null(k)) {
                 if(area == "lower" & type == "strict") {
@@ -146,15 +157,19 @@ server <- function(input, output) {
         } else {
             ggplot() +
                 geom_bar(
-                    mapping = aes(x = x, y = binom_dist),
-                    stat="identity", fill = "lightblue", color = "black") +
+                    mapping = aes(x = x, y = binom_dist, fill = fill),
+                    stat="identity", color = "black") +
                 labs(
                     x = "x",
                     y = "Probability") +
-                theme_bw()
+                theme_bw() + 
+                theme(legend.position = "none") +
+                scale_fill_manual(values = c("not_selected" = "lightblue",
+                                             "selected" = "blue"))
             }
     })
 
+    #### CALCULATIONS ####
     output$results <- renderText({
         n <- input$n
         p <- input$p
@@ -162,27 +177,24 @@ server <- function(input, output) {
         area <- input$area
         type <- input$type
         flag <- check_conditions(n, p)
-        
-        
-        
+        correction <- input$correction
         
         if (!is.null(k)) {
             if (area == "lower" & type == "strict") {
-
-                p_binom <- sum(dbinom(0:k-1, size = n, prob = p))
-                p_norm <- pnorm(q = k, mean = n*p, sd = sqrt(n*p*(1-p)))
+                p_binom <- pbinom(k-1, size = n, prob = p)
+                p_norm <- pnorm(q = k-correction/2, mean = n*p, sd = sqrt(n*p*(1-p)))
                 sign <- "<"
             } else if (area == "lower" & type == "not_strict") {
-                p_binom <- sum(dbinom(0:k, size = n, prob = p))
-                p_norm <- pnorm(q = k+0.5, mean = n*p, sd = sqrt(n*p*(1-p)))
+                p_binom <- pbinom(k, size = n, prob = p)
+                p_norm <- pnorm(q = k+correction/2, mean = n*p, sd = sqrt(n*p*(1-p)))
                 sign <- "≤"
             } else if (area == "upper" & type == "strict") {
-                p_binom <- sum(dbinom(k+1:n, size = n, prob = p))
-                p_norm <- 1 - pnorm(q = k, mean = n*p, sd = sqrt(n*p*(1-p)))
+                p_binom <- 1 - pbinom(k, size = n, prob = p)
+                p_norm <- 1 - pnorm(q = k+correction/2, mean = n*p, sd = sqrt(n*p*(1-p)))
                 sign <- ">"
             } else {
-                p_binom <- sum(dbinom(k:n, size = n, prob = p))
-                p_norm <- 1 - pnorm(q = k+0.5, mean = n*p, sd = sqrt(n*p*(1-p)))
+                p_binom <- 1 - pbinom(k-1, size = n, prob = p)
+                p_norm <- 1 - pnorm(q = k-correction/2, mean = n*p, sd = sqrt(n*p*(1-p)))
                 sign <- "≥"
             }
             
@@ -198,5 +210,5 @@ server <- function(input, output) {
         })
 }
 
-
+#### RUN ####
 shinyApp(ui = ui, server = server)
