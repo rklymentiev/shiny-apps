@@ -15,9 +15,10 @@ ui <- fluidPage(
         helpText("If predicted probability of class 'Yes' is greater or equal to the threshold value,
                  then the predicted class will be  defined as 'Yes'."),
         helpText("Set of random observations is generated each time the number n is changed."),
-        helpText("Use threshold slider to find the best values of TPR of FPR. Correctly predicted observations
+        helpText("Use threshold slider to find the best values of TPR and FPR. Correctly predicted observations
         are painted in green, incorrectly predicted are painted in red. The point corresponding to that
                  treshold value is plotted in red on the ROC plot."),
+        helpText(HTML("<b>Created by <a href='https://github.com/ruslan-kl'>Ruslan Klymentiev</a></b>")),
         helpText(a(href="https://github.com/ruslan-kl/shiny-apps/tree/master/roc", target="_blank", "Code at GitHub")),
         width = 3),
 

@@ -1,6 +1,8 @@
 ---
-title: "Normal Approximation to Binomial Distribution"
-output: html_document
+output:
+  html_document:
+    theme: flatly
+    highlight: tango
 ---
 
 In probability theory and statistics, **the binomial distribution** with parameters $n$ and $p$ is the discrete probability distribution of the number of successes in a sequence of $n$ **independent** experiments, each asking a yes–no question, and each with its own boolean-valued outcome: success/yes/true/one (with probability $p$) or failure/no/false/zero (with probability $q = 1 − p$).
@@ -16,9 +18,9 @@ $$P(x=3) = {{7}\choose{3}} \cdot \frac{1}{2}^3 \cdot (1 - \frac{1}{2})^{7-3} = \
 
 Calculating equations for such small numbers like in this example can be easily done by pen and paper. Imagine following example: study suggests that a new drug is 74% effective in dealing with a disease X. Suppose 100 patients who has such disease were randomly selected. What is the probabilty that drug will help 80 or more of them?
 
-$$P(x \geq 80) = {{80}\choose{100}} \cdot 0.74^{80} \cdot (1 - 0.74)^{100-80} + {{81}\choose{100}} \cdot 0.74^{81} \cdot (1 - 0.74)^{100-81} $$ 
+$$P(x \geq 80) = {{80}\choose{100}} \cdot 0.74^{80} \cdot 0.26^{100-80} + {{81}\choose{100}} \cdot 0.74^{81} \cdot 0.26^{100-81} $$ 
 $$ + ... $$ 
-$$+ {{99}\choose{100}} \cdot 0.74^{99} \cdot (1 - 0.74)^{100-99} + {{100}\choose{100}} \cdot 0.74^{100} \cdot (1 - 0.74)^{100-100}$$ 
+$$+ {{99}\choose{100}} \cdot 0.74^{99} \cdot 0.26^{100-99} + {{100}\choose{100}} \cdot 0.74^{100} \cdot 0.26^{100-100}$$ 
 
 It is not an easy task to do by hand, bun it can be done using software, for example:
 

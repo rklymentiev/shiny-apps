@@ -25,9 +25,10 @@ check_conditions <- function(n, p) {
 
 #### UI ####
 ui <- fluidPage(
+    
     theme = shinytheme("flatly"),
 
-    titlePanel("Normal Approximation to Binomial Distrtibution"),
+    headerPanel("Normal Approximation to Binomial Distribution"),
 
     sidebarPanel(
         sliderInput(
@@ -54,6 +55,7 @@ ui <- fluidPage(
         checkboxInput("shade_curve", "Under the Normal Curve", value = TRUE),
         checkboxInput("shade_bar", "On the Bar Chart", value = FALSE),
         br(),
+        helpText(HTML("<b>Created by <a href='https://github.com/ruslan-kl'>Ruslan Klymentiev</a></b>")),
         helpText(a(href="https://github.com/ruslan-kl/shiny-apps/tree/master/norm-binom", target="_blank", "Code at GitHub")),
         width = 4
         
@@ -62,7 +64,7 @@ ui <- fluidPage(
     mainPanel(
         tabsetPanel(
             type = "tabs",
-            tabPanel("Results", 
+            tabPanel("Results",
                      htmlOutput("conditions"),
                      br(),
                      plotOutput("distplot"),
@@ -162,7 +164,7 @@ server <- function(input, output) {
                 labs(
                     x = "x",
                     y = "Probability") +
-                theme_bw() + 
+                theme_bw() +
                 theme(legend.position = "none") +
                 scale_fill_manual(values = c("not_selected" = "lightblue",
                                              "selected" = "blue"))
