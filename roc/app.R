@@ -11,6 +11,7 @@ ui <- fluidPage(
 
     sidebarPanel(
         sliderInput("n", "Number of Observations (n):", min = 5, max = 25, value = 8, step = 1),
+        actionButton("goButton", "Go!"),
         sliderInput("threshold", "Threshold:", min = 0, max = 1, value = 0.5, step = 0.01),
         helpText("If predicted probability of class 'Yes' is greater or equal to the threshold value,
                  then the predicted class will be  defined as 'Yes'."),
@@ -42,7 +43,7 @@ ui <- fluidPage(
 
 server <- function(input, output) {
 
-    observeEvent(input$n, {
+    observeEvent(input$goButton, {
         n <- as.integer(input$n)
         
         actual_probs <- rbinom(n, 1, 0.5)
@@ -55,8 +56,8 @@ server <- function(input, output) {
         predicted_class <- list(probs = NA,
                                 labels = rep("No", n),
                                 values = rep(0, n))
-        predicted_class$probs[actual_class$values == 1] <- round(runif(sum(actual_class$values == 1), 0.25, 0.95), 2)
-        predicted_class$probs[actual_class$values != 1] <- round(runif(sum(actual_class$values != 1), 0.05, 0.75), 2)
+        predicted_class$probs[actual_class$values == 1] <- round(runif(sum(actual_class$values == 1), 0.2, 0.9), 2)
+        predicted_class$probs[actual_class$values != 1] <- round(runif(sum(actual_class$values != 1), 0.05, 0.8), 2)
         
         observeEvent(input$threshold, {
             threshold <- as.numeric(input$threshold)
