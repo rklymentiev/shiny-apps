@@ -4,7 +4,7 @@ library(shinythemes)
 
 shinyUI(fluidPage(
   theme = shinytheme("flatly"),
-  headerPanel("Bayes’s Rule and Disease Testing"),
+  headerPanel("Bayes Rule and Disease Testing"),
   sidebarPanel(
     # numericInput("p_D", "Prevalence of a disease (or prior probability):", 0.01, min = 0, max = 1, step = 0.01),
     # numericInput("sensitivity", "Test's Sensitivity:", 0.95, min = 0, max = 1, step = 0.01),
