@@ -1,0 +1,60 @@
+<style type="text/css">
+.tg  {border-collapse:collapse;border-color:#aaa;border-spacing:0;}
+.tg td{background-color:#fff;border-color:#aaa;border-style:solid;border-width:1px;color:#333;
+  font-family:Arial, sans-serif;font-size:14px;overflow:hidden;padding:4px 8px;word-break:normal;}
+.tg th{background-color:#f38630;border-color:#aaa;border-style:solid;border-width:1px;color:#fff;
+  font-family:Arial, sans-serif;font-size:14px;font-weight:normal;overflow:hidden;padding:4px 8px;word-break:normal;}
+.tg .tg-0ypy{border-color:#000000;cursive, sans-serif !important;;text-align:center;
+  vertical-align:middle}
+.tg .tg-kjyc{border-color:#000000;cursive, sans-serif !important;;font-style:italic;font-weight:bold;
+  text-align:center;vertical-align:middle}
+.tg .tg-btmo{border-color:#000000;cursive, sans-serif !important;;font-size:22px;font-weight:bold;
+  text-align:center;vertical-align:middle}
+.tg .tg-crmu{border-color:#000000;font-size:18px;text-align:left;vertical-align:middle}
+.tg .tg-0a7q{border-color:#000000;text-align:left;vertical-align:top;width:300px}
+
+</style>
+<table class="tg">
+<thead>
+  <tr>
+    <th class="tg-btmo">Player</th>
+    <th class="tg-btmo">Skills</th>
+    <th class="tg-btmo">Algorithm</th>
+  </tr>
+</thead>
+<tbody>
+  <tr>
+    <td class="tg-0ypy">"<b>Grumpy</b>"<br><img src="https://i.ibb.co/y6SqSfR/grumpy.png" width="100" height="100"></td>
+    <td class="tg-0ypy">Grumpy is greedy. He always chooses the slot machine that showed the highest reward rate on previous trials. That often results in sticking to the suboptimal choice and low overall reward.</td>
+    <td class="tg-0a7q"><p>"<strong>&epsilon;-greedy Algorithm</strong>"</p>
+<pre><code>for i in 1:n
+&nbsp; &nbsp; r = runif(0, 1)
+&nbsp; &nbsp; if r &lt; &epsilon;:
+&nbsp; &nbsp; &nbsp; &nbsp; random action
+&nbsp; &nbsp; else:
+&nbsp; &nbsp; &nbsp; &nbsp; current-best action</code></pre>
+  </tr>
+  <tr>
+    <td class="tg-0ypy">"<b>Pop</b>"<br><img src="https://i.ibb.co/6FXmXfH/pop.gif" alt="Image" width="100" height="100"></td>
+    <td class="tg-0ypy">Pop doesn't care about previous results, just explores randomly. Since there is no exploitation at all, overall reward is always low.</td>
+    <td class="tg-0a7q"><p>"<strong>Random Choice</strong>"</p>
+<pre><code>for i in 1:n
+&nbsp; &nbsp; choice = runif(1, 3)</code></pre>
+  </tr>
+  <tr>
+    <td class="tg-0ypy">"<b>Toast</b>"<br><img src="https://i.ibb.co/1vqZbQp/toast.png" width="100" height="100"></td>
+    <td class="tg-0ypy">Toast is smart. He uses previous information about the rewards to update his beliefs while still exploring. Mostly in all cases chooses the machine with the highest probability of reward.</td>
+    <td class="tg-0a7q"><p>"<strong>Thompson Sampling</strong>"</p>
+<pre><code>choose priors &alpha; and &beta; for each machine
+for i in 1:n
+&nbsp; &nbsp; r<sub>1</sub> = rbeta(&alpha;<sub>1</sub>, &beta;<sub>1</sub>)
+&nbsp; &nbsp; r<sub>2</sub> = rbeta(&alpha;<sub>2</sub>, &beta;<sub>2</sub>)
+&nbsp; &nbsp; r<sub>3</sub> = rbeta(&alpha;<sub>3</sub>, &beta;<sub>3</sub>)
+&nbsp; &nbsp; choice = argmax(r<sub>1</sub>, r<sub>2</sub>, r<sub>3</sub>)
+&nbsp; &nbsp; if reward:
+&nbsp; &nbsp; &nbsp; &nbsp; &alpha;<sub>choice</sub> += 1
+&nbsp; &nbsp; else:
+&nbsp; &nbsp; &nbsp; &nbsp; &beta;<sub>choice</sub> += 1&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</code></pre></td>
+  </tr>
+</tbody>
+</table>
