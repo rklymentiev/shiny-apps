@@ -1,22 +1,10 @@
-#
-# This is the user-interface definition of a Shiny web application. You can
-# run the application by clicking 'Run App' above.
-#
-# Find out more about building applications with Shiny here:
-#
-#    http://shiny.rstudio.com/
-#
-
 library(shiny)
 
-# Define UI for application that draws a histogram
 shinyUI(fluidPage(
     theme = shinythemes::shinytheme("journal"),
 
-    # Application title
     titlePanel("Bandit Cats"),
 
-    # Sidebar with a slider input for number of bins
     sidebarLayout(
         sidebarPanel(
             sliderInput(
@@ -39,12 +27,11 @@ shinyUI(fluidPage(
             br(),
             br(),
             helpText(HTML("<b>Created by <a href='https://github.com/ruslan-kl'>Ruslan Klymentiev</a></b>")),
-            helpText(a(href="https://github.com/ruslan-kl/shiny-apps/tree/master/cat_bandits", target="_blank", "Code at GitHub")),
+            helpText(a(href="https://github.com/ruslan-kl/shiny-apps/tree/master/bandit_cats", target="_blank", "Code at GitHub")),
             width = 3
             
         ),
 
-        # Show a plot of the generated distribution
         mainPanel(
             tabsetPanel(
                 type = "tabs",

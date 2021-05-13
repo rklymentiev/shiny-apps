@@ -6,6 +6,7 @@ library(plotly)
 fluidPage(
   headerPanel('Example'),
   sidebarPanel(
+    actionButton("go", "Go"),
     selectInput('xcol','X Variable', names(mtcars)),
     selectInput('ycol','Y Variable', names(mtcars)),
     selected = names(mtcars)[[2]]),

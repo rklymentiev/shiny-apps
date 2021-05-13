@@ -1,6 +1,8 @@
 library(shiny)
 library(tidyverse)
-library(ggcats)
+# library(ggcats)
+library(png)
+library(grid)
 
 
 shinyServer(function(input, output) {
@@ -116,11 +118,11 @@ shinyServer(function(input, output) {
             pivot_longer(cols = !trial,
                          names_to = "cat_name") 
         
-        rewards_df$cat <- NA
-        rewards_df$cat[which(rewards_df$cat_name == "toast")] <- "toast"
-        rewards_df$cat[which(rewards_df$cat_name == "grumpy")] <- "grumpy"
-        rewards_df$cat[which(rewards_df$cat_name == "pop")] <- rep(c("pop_close", "pop"), 
-                                                                   length(rewards_df$cat[which(rewards_df$cat_name == "pop")])/2)
+        # rewards_df$cat <- NA
+        # rewards_df$cat[which(rewards_df$cat_name == "toast")] <- "toast"
+        # rewards_df$cat[which(rewards_df$cat_name == "grumpy")] <- "grumpy"
+        # rewards_df$cat[which(rewards_df$cat_name == "pop")] <- rep(c("pop_close", "pop"), 
+        #                                                            length(rewards_df$cat[which(rewards_df$cat_name == "pop")])/2)
         return(rewards_df)
     })
     
@@ -131,6 +133,14 @@ shinyServer(function(input, output) {
     })
         
     output$picks_plot <- renderPlot({
+        
+        toast <- readPNG("toast.png")
+        pop <- readPNG("pop.png")
+        grumpy <- readPNG("grumpy.png")
+        toast_img <- rasterGrob(toast, interpolate=FALSE)
+        pop_img <- rasterGrob(pop, interpolate=FALSE)
+        grumpy_img <- rasterGrob(grumpy, interpolate=FALSE)
+        
         ggplot() +
             geom_bar(
                 data=choice_totals(),
@@ -138,13 +148,16 @@ shinyServer(function(input, output) {
                 color = "black",
                 stat="identity",
                 position=position_dodge()) +
-            geom_cat(
-                aes(
-                    cat = c("pop","grumpy", "toast"),
-                    y = c(n()+100,n()+100,n()+100),
-                    x = c("pop","grumpy", "toast")),
-                size = 4) +
-            ylim(0, n()+150) +
+            annotation_custom(grumpy_img, xmin = 0.5, xmax = 1.5, ymin=n(), ymax=n()+n()*0.2) +
+            annotation_custom(pop_img, xmin = 1.5, xmax = 2.5, ymin=n(), ymax=n()+n()*0.2) +
+            annotation_custom(toast_img, xmin = 2.5, xmax = 3.5, ymin=n(), ymax=n()+n()*0.2) +
+            # geom_cat(
+            #     aes(
+            #         cat = c("pop","grumpy", "toast"),
+            #         y = c(n()+100,n()+100,n()+100),
+            #         x = c("pop","grumpy", "toast")),
+            #     size = 4) +
+            ylim(0, n()+n()*0.2) +
             labs(
                 title = "Total Picks",
                 y = "Count") +
@@ -161,6 +174,14 @@ shinyServer(function(input, output) {
     })
     
     output$reward_plot <- renderPlot({
+        
+        toast <- readPNG("toast.png")
+        pop <- readPNG("pop.png")
+        grumpy <- readPNG("grumpy.png")
+        toast_img <- rasterGrob(toast, interpolate=FALSE)
+        pop_img <- rasterGrob(pop, interpolate=FALSE)
+        grumpy_img <- rasterGrob(grumpy, interpolate=FALSE)
+        
         ggplot() +
             geom_line(
                 data = rewards_df(), 
@@ -170,18 +191,30 @@ shinyServer(function(input, output) {
                 size = 2) +
             # geom_cat(aes(cat = cat), size = 5) +
             # transition_reveal(trial) +
-            geom_cat(
-                aes(
-                    cat = total_rewards()$cat_name, 
-                    y = total_rewards()$s, 
-                    x = rep(n(),3)), 
-                size = 4) + 
-            xlim(0, n()+60) +
+            # geom_cat(
+            #     aes(
+            #         cat = total_rewards()$cat_name, 
+            #         y = total_rewards()$s, 
+            #         x = rep(n(),3)), 
+            #     size = 4) + 
+            xlim(0, n()*1.05) +
             labs(
                 title = "Cumulative Reward by Trial",
                 x = "Trial",
                 y = "Reward") +
             ylim(0, max(total_rewards()$s)+30) +
+            annotation_custom(
+                grumpy_img, xmin = n()*0.95, xmax = n()*1.05, 
+                ymin=total_rewards()$s[which(total_rewards()$cat_name == "grumpy")]*0.85, 
+                ymax=total_rewards()$s[which(total_rewards()$cat_name == "grumpy")] + n()*0.1) +
+            annotation_custom(
+                pop_img, xmin = n()*0.95, xmax = n()*1.05, 
+                ymin=total_rewards()$s[which(total_rewards()$cat_name == "pop")]*0.9, 
+                ymax=total_rewards()$s[which(total_rewards()$cat_name == "pop")] + n()*0.1) +
+            annotation_custom(
+                toast_img, xmin = n()*0.95, xmax = n()*1.05, 
+                ymin=total_rewards()$s[which(total_rewards()$cat_name == "toast")]*0.9, 
+                ymax=total_rewards()$s[which(total_rewards()$cat_name == "toast")] + n()*0.1) +
             theme_linedraw() +
             theme(
                 legend.position = "none",
