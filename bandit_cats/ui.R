@@ -39,7 +39,7 @@ shinyUI(fluidPage(
             br(),
             br(),
             helpText(HTML("<b>Created by <a href='https://github.com/ruslan-kl'>Ruslan Klymentiev</a></b>")),
-            helpText(a(href="https://github.com/ruslan-kl/shiny-apps/tree/master/norm-binom", target="_blank", "Code at GitHub")),
+            helpText(a(href="https://github.com/ruslan-kl/shiny-apps/tree/master/cat_bandits", target="_blank", "Code at GitHub")),
             width = 3
             
         ),
