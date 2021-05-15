@@ -223,6 +223,8 @@ shinyServer(function(input, output) {
                 axis.title.y = element_text(face = "bold", size = 16))
     })
     
+    output$helper_text <- renderText({"<i>Press Go! to generate a new game.</i>"})
+    
     
 
 })

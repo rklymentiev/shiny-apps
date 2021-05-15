@@ -3,7 +3,7 @@ library(shiny)
 shinyUI(fluidPage(
     theme = shinythemes::shinytheme("journal"),
 
-    titlePanel("Bandit Cats"),
+    titlePanel("Bandit Cats and Exploration-Exploitation Trade-Off"),
 
     sidebarLayout(
         sidebarPanel(
@@ -45,6 +45,7 @@ shinyUI(fluidPage(
                 tabPanel(
                     "Results",
                     br(),
+                    htmlOutput("helper_text"),
                     plotOutput("picks_plot", width = 650, height = 500),
                     br(),
                     plotOutput("reward_plot", width = 600, height = 500)),
