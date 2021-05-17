@@ -44,7 +44,7 @@
   </tr>
   <tr>
     <td class="tg-0ypy">"<b>Toast</b>"<br><img src="https://i.ibb.co/1vqZbQp/toast.png" width="100" height="100"></td>
-    <td class="tg-0ypy">Toast is smart. He uses previous information about the rewards to update his beliefs while still exploring. Mostly in all cases chooses the machine with the highest probability of reward.<br><br><b>Exploration:</b> ≈50%<br><b>Exploitation:</b> ≈50%</td>
+    <td class="tg-0ypy">Toast is smart. After each action he updates his beliefs and before making a new action and does a random sampling based on that information. Mostly in all cases sticks to the machine with the highest probability of reward.<br><br><b>Exploration:</b> ≈50%<br><b>Exploitation:</b> ≈50%</td>
     <td class="tg-0a7q"><p>"<strong>Thompson Sampling</strong>"</p>
 <pre><code>&alpha;<sub>1</sub>=&alpha;<sub>2</sub>=&alpha;<sub>3</sub>=1
 &beta;<sub>1</sub>=&beta;<sub>2</sub>=&beta;<sub>3</sub>=1
