@@ -41,15 +41,23 @@ shinyServer(function(input, output) {
         # epsilon greedy algorithm
         eg_memory <- c(0,0,0)
         init_choice <- rdunif(n = 1, b = 3, a = 1)
-        success <- rbernoulli(n = 1, p = true_rates()[init_choice])
+        choice_memory$grumpy <- c(choice_memory$grumpy, init_choice)
+        success <- as.logical(rbernoulli(n = 1, p = true_rates()[init_choice]))
         eg_memory[init_choice] <- eg_memory[init_choice] + as.integer(success)
+        
+        # init_choice <- rdunif(n = 1, b = 3, a = 1)
+        # success <- rbernoulli(n = 1, p = true_rates()[init_choice])
+        # eg_memory[init_choice] <- eg_memory[init_choice] + as.integer(success)
 
         for (i in 1:n()) {
             explore <- rbernoulli(n = 1, p = epsilon())
             if (explore) {
                 choice <- rdunif(n = 1, b = 3, a = 1)
             } else {
-                choice <- which.max(eg_memory)
+                p_A <- eg_memory[1] / sum(choice_memory$grumpy == 1)
+                p_B <- eg_memory[2] / sum(choice_memory$grumpy == 2)
+                p_C <- eg_memory[3] / sum(choice_memory$grumpy == 3)
+                choice <- which.max(c(p_A, p_B, p_C))
             }
             success <- rbernoulli(n = 1, p = true_rates()[choice])
             eg_memory[choice] <- eg_memory[choice] + as.integer(success)
