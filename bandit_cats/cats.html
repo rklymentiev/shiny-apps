@@ -26,35 +26,37 @@
   <tr>
     <td class="tg-0ypy">"<b>Grumpy</b>"<br><img src="https://i.ibb.co/y6SqSfR/grumpy.png" width="100" height="100"></td>
     <td class="tg-0ypy">Grumpy is greedy. In (1-ε)% of cases he chooses the slot machine that showed the highest reward rate on previous trials. That often results in sticking to the suboptimal choice and low overall reward.<br><br><b>Exploration:</b> ε%<br><b>Exploitation:</b> (1-ε)%</td>
-    <td class="tg-0a7q"><p>"<strong>&epsilon;-greedy Algorithm</strong>"</p>
+    <td class="tg-0a7q"><p>"<strong>&epsilon;-greedy</strong>"</p>
 <pre><code>for i in 1:n
-&nbsp; &nbsp; r = runif(0, 1)
-&nbsp; &nbsp; if r &lt; &epsilon;:
-&nbsp; &nbsp; &nbsp; &nbsp; random action
-&nbsp; &nbsp; else:
-&nbsp; &nbsp; &nbsp; &nbsp; current-best action</code></pre>
+&nbsp; r = runif(0, 1)
+&nbsp; if r &lt; &epsilon;:
+&nbsp; &nbsp; choice = runif(1, 3)
+&nbsp; else:
+&nbsp; &nbsp; choice = argmax(reward<sub>1</sub>, 
+&nbsp; &nbsp; reward<sub>2</sub>, reward<sub>3</sub>)</code></pre>
   </tr>
   <tr>
     <td class="tg-0ypy">"<b>Pop</b>"<br><img src="https://i.ibb.co/6FXmXfH/pop.gif" alt="Image" width="100" height="100"></td>
     <td class="tg-0ypy">Pop doesn't care about previous results, just explores randomly. Since there is no exploitation at all, overall reward is always low.<br><br><b>Exploration:</b> 100%<br><b>Exploitation:</b> 0%</td>
     <td class="tg-0a7q"><p>"<strong>Random Choice</strong>"</p>
 <pre><code>for i in 1:n
-&nbsp; &nbsp; choice = runif(1, 3)</code></pre>
+&nbsp; choice = runif(1, 3)</code></pre>
   </tr>
   <tr>
     <td class="tg-0ypy">"<b>Toast</b>"<br><img src="https://i.ibb.co/1vqZbQp/toast.png" width="100" height="100"></td>
     <td class="tg-0ypy">Toast is smart. He uses previous information about the rewards to update his beliefs while still exploring. Mostly in all cases chooses the machine with the highest probability of reward.<br><br><b>Exploration:</b> ≈50%<br><b>Exploitation:</b> ≈50%</td>
     <td class="tg-0a7q"><p>"<strong>Thompson Sampling</strong>"</p>
-<pre><code>choose priors &alpha; and &beta; for each machine
+<pre><code>&alpha;<sub>1</sub>=&alpha;<sub>2</sub>=&alpha;<sub>3</sub>=1
+&beta;<sub>1</sub>=&beta;<sub>2</sub>=&beta;<sub>3</sub>=1
 for i in 1:n
-&nbsp; &nbsp; r<sub>1</sub> = rbeta(&alpha;<sub>1</sub>, &beta;<sub>1</sub>)
-&nbsp; &nbsp; r<sub>2</sub> = rbeta(&alpha;<sub>2</sub>, &beta;<sub>2</sub>)
-&nbsp; &nbsp; r<sub>3</sub> = rbeta(&alpha;<sub>3</sub>, &beta;<sub>3</sub>)
-&nbsp; &nbsp; choice = argmax(r<sub>1</sub>, r<sub>2</sub>, r<sub>3</sub>)
-&nbsp; &nbsp; if reward:
-&nbsp; &nbsp; &nbsp; &nbsp; &alpha;<sub>choice</sub> += 1
-&nbsp; &nbsp; else:
-&nbsp; &nbsp; &nbsp; &nbsp; &beta;<sub>choice</sub> += 1&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</code></pre></td>
+&nbsp; r<sub>1</sub> = rbeta(&alpha;<sub>1</sub>, &beta;<sub>1</sub>)
+&nbsp; r<sub>2</sub> = rbeta(&alpha;<sub>2</sub>, &beta;<sub>2</sub>)
+&nbsp; r<sub>3</sub> = rbeta(&alpha;<sub>3</sub>, &beta;<sub>3</sub>)
+&nbsp; choice = argmax(r<sub>1</sub>, r<sub>2</sub>, r<sub>3</sub>)
+&nbsp; if reward:
+&nbsp; &nbsp; &alpha;<sub>choice</sub> += 1
+&nbsp; else:
+&nbsp; &nbsp; &beta;<sub>choice</sub> += 1&nbsp; &nbsp; &nbsp; &nbsp;&nbsp;</code></pre></td>
   </tr>
 </tbody>
 </table>

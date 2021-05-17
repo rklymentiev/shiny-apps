@@ -9,7 +9,7 @@ shinyUI(fluidPage(
         sidebarPanel(
             sliderInput(
                 inputId = "n", label = "Number of trials (n):",
-                min = 200, max = 2000, value = 1000, step = 200),
+                min = 100, max = 1000, value = 100, step = 50),
             sliderInput(
                 inputId = "rate_A", label = "Probability of Reward A:",
                 min = 0, max = 1, value = 0.2, step = 0.01),
