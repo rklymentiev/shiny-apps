@@ -20,8 +20,8 @@ shinyUI(fluidPage(
                  choices = list("Has a disease", "Doesn't have a disease"),selected = "Has a disease"),
     helpText("Probabilities are  presented in decimal format. For example, 1% = 0.01, 25.6% = 0.256 and so on."), 
     br(),
-    helpText(HTML("<b>Created by <a href='https://github.com/ruslan-kl'>Ruslan Klymentiev</a></b>")),
-    helpText(a(href="https://github.com/ruslan-kl/shiny-apps/tree/master/bayes", target="_blank", "Code at GitHub")),
+    helpText(HTML("<b>Created by </b> <a href='https://github.com/rklymentiev'>Ruslan Klymentiev</a>")),
+    helpText(a(href="https://github.com/rklymentiev/shiny-apps/tree/master/bayes", target="_blank", "Code at GitHub")),
     width = 3),
   mainPanel(
     tabsetPanel(type = "tabs",
